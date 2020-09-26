@@ -1,70 +1,63 @@
 import React, {useState} from 'react';
 import './App.css';
-import {v4 as uuidv4} from 'uuid'
+import {v4 as uuidv4} from "uuid";
+import ForInput from "./ForInput";
+import Counters from "./Counters";
+
+
+const initialCounters = [
+    {id: '111', value: 10, buttons: [1,]},
+    {id: '112', value: 20, buttons: [1, 2,]},
+    {id: '113', value: 30, buttons: [1, 2, 3,]},
+];
+
 
 function App() {
 
-    const [counters, setCounters] = useState([
-        {id: '11alks', val: 1, buttons: [1, 2, 3]},
-        {id: '22alsk', val: 2, buttons: [1, 2, 3, 4]},
-        {id: '33alsk', val: 3, buttons: [1, 2, 3, 4, 5]},
-    ])
+    const [counters, setCounters] = useState(initialCounters)
 
-    const [counter, setCounter] = useState('')
-    const inputCounter = (e) => {
-        setCounter(e.target.value);
-    }
-
-    const [buttons, setButtons] = useState('')
-    const inputButton = (e) => {
-        setButtons(e.target.value)
-    }
-
-
-    const addNewCounter = () => {
-        if (counter && buttons) {
-            const newArr = [];
-            for (let i = 1; i <= buttons; i++) {
-                newArr.push(i)
-            }
-            const newCounter = [...counters, {id: uuidv4(), val: +counter, buttons: newArr}];
-            setCounters(newCounter)
-        }
-        setCounter('')
-        setButtons('')
-    }
-
-    const plusOrMinus = ((id, num) => {
-        const newCounters = counters.map(el => {
+    const countSumById = (id, value) => {
+        const newCounters = counters.map((el) => {
             if (id === el.id) {
-                return {...el, val: el.val + num};
+                return {...el, value: el.value + value};
             } else {
                 return el;
             }
         })
         setCounters(newCounters)
-    })
+    }
 
+    const [inputValue, setInputValue] = useState('')
+    const [inputButtons, setInputButtons] = useState('')
+
+    const addCounter = (inputValue, inputButtons) => {
+        const newArr = [];
+        for (let i = 1; i <= inputButtons; i++){
+            newArr.push(i);
+        }
+        const newCounters = [...counters, {id: uuidv4(), value: inputValue, buttons: newArr}];
+        setCounters(newCounters);
+        setInputButtons('')
+        setInputValue('')
+    }
 
     return (
         <div className="App">
-            <h1>Buttoned Counters</h1>
-            <input onChange={inputCounter} value={counter} placeholder='Number'/>
-            <input onChange={inputButton} value={buttons} placeholder='How many buttons'/>
-            <button onClick={addNewCounter}> Add</button>
-
-            {counters.map(el =>
-                <p key={el.id}>
-                    {el.buttons.map(elm =>
-                        <button key={Math.random()} onClick={() => plusOrMinus(el.id, -elm)}> {-elm} </button>
-                    )}
-                    {el.val}
-                    {el.buttons.map(elm =>
-                        <button key={Math.random()} onClick={() => plusOrMinus(el.id, elm)}> {'+' + elm} </button>
-                    )}
-                </p>
-            )}
-
+            <h1>Buttoned Counters Version 2</h1>
+            <hr />
+                <ForInput
+                    addCounter={addCounter}
+                    inputValue={inputValue}
+                    inputButtons={inputButtons}
+                    setInputValue={setInputValue}
+                    setInputButtons={setInputButtons}
+                />
+                <hr />
+                <Counters
+                    counters={counters}
+                    countSumById={countSumById}
+                />
+            <hr />
         </div>
     );
 }
